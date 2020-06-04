@@ -1,0 +1,173 @@
+<!-- 评论例题 -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div class="box">
+    <div class="box-news">
+      ...an aching void of loneliness.
+      痛苦的孤寂感
+      2 N-COUNT 空间;真空;空虚
+      You can describe a large or frightening space as a void .
+      He stared into the dark void where the battle had been fought...
+      他凝望着那片漆黑的空旷之地，那次战役就是在这里进行的。
+      The ship moved silently through the black void...
+    </div>
+    <div class="box-pl" id="box-pl">
+
+    </div>
+    <div class="box-text" id="box-text">
+      <textarea class='text' name="" id="text" cols="30" rows="10"></textarea>
+      <button id='btn'>发表评论</button>
+      <button id="btn2">获取缓存数据</button>
+      <button id="btn3">清除缓存数据</button>
+      <button id="btn4">缓存测试数据</button>
+    </div>
+  </div>
+</body>
+<script src="./js/pinglun.js"></script>
+<script>
+  let db = new DataHelper('plKey', 'id')
+  window.onload = function () {
+    let arr = db.readData()
+    for (let ele of arr) {
+      makeDiv(ele.content, ele.id)
+    }
+  }
+
+  // 渲染数据
+  let fatherDiv = document.getElementById('box-pl')
+
+  function makeDiv(content, id) {
+    let div = document.createElement('div')
+    div.style.border = '1px solid red'
+    div.style.position = 'relative'
+    fatherDiv.appendChild(div)
+    let spanLeft = document.createElement('span')
+    spanLeft.innerText = content
+    div.appendChild(spanLeft)
+    let spanRight = document.createElement('span')
+    spanRight.innerText = "×"
+    div.appendChild(spanRight)
+    spanRight.setAttribute('id', id)
+    spanRight.setAttribute('class', 'span2')
+    spanRight.onclick = remove
+  }
+  // 删除事件
+  function remove(e) {
+    let delSpan = e.srcElement
+    delSpan.parentNode.parentNode.removeChild(delSpan.parentNode)
+    let spanId = delSpan.getAttribute('id')
+    db.delData(spanId)
+  }
+  // 发表评论
+  let btn = document.getElementById('btn')
+  btn.onclick = function () {
+    let textDiv = document.getElementById('text')
+    let content = textDiv.value
+    let arr = db.readData()
+    let id = db.addData(content)
+    let obj = {
+      content: content,
+      id: id
+    }
+    arr.push(obj)
+    db.saveData(arr)
+    makeDiv(content, id)
+    textDiv.value = ''
+  }
+  // 测试获取内存数据用
+  let btn2 = document.getElementById('btn2')
+  btn2.onclick = function () {
+    console.log(JSON.parse(localStorage.getItem('plKey')))
+  }
+  // 测试清除内存数据用
+  let btn3 = document.getElementById('btn3')
+  btn3.onclick = function () {
+    localStorage.clear()
+  }
+  // 缓存测试数据
+  let btn4 = document.getElementById('btn4')
+  btn4.onclick = function () {
+    let testArr = [{
+        content: '评论更精彩',
+        id: 1
+      },
+      {
+        content: '缓存测试数据',
+        id: 2
+      },
+      {
+        content: '测试清除内存数据用',
+        id: 3
+      }
+    ]
+    let testStr = JSON.stringify(testArr)
+    localStorage.setItem('plKey', testStr)
+  }
+</script>
+<style>
+  .box {
+    width: 500px;
+    margin: 0 auto;
+  }
+
+  .box-news {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid green;
+  }
+
+  .box-pl {
+    font-size: 16px;
+  }
+
+  .text {
+    width: 100%;
+    height: 100px;
+    box-sizing: border-box;
+    resize: none;
+    font-size: 16px;
+    outline: none;
+  }
+
+  .box-pl-main {
+    border: 1px solid yellow;
+    position: relative;
+  }
+
+  .span2 {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    top: 1px;
+    right: 10px;
+    background-color: gray;
+    cursor: pointer;
+  }
+</style>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
